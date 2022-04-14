@@ -171,7 +171,7 @@ export class DrawingApp extends GraphicsApp
                 return;
             }
 
-            // Mouse-Sky Intersections (PART 1)
+            // Mouse-Sky Intersections
             // Projects a 2D normalized screen point (e.g., the mouse position in normalized
             // device coordinates) to a 3D point on the "sky," which is really a huge sphere
             // that the viewer is inside.  This ray cast should always return a result
@@ -179,7 +179,8 @@ export class DrawingApp extends GraphicsApp
             // Note, this ray cast will only test if the ray passing through the screen point 
             // intersects the sphere; it does not check to see if the ray hits the ground or 
             // anything else first.  Then, you should create a new billboard at the sky
-            // intersection point.
+            // intersection point.  You should also set the draw state to correct mode,
+            // similar to the code blocks above for the ground and billboard.
 
             // TO DO: ADD YOUR CODE HERE
         }
