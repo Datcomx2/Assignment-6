@@ -1,1 +1,157 @@
-# Assignment-6
+# Assignment 6: A World Made of Drawings
+
+**Due: Thursday, April 28, 11:59pm CDT**
+
+![](./images/harold.jpg)
+
+The culminating assignment in the course is inspired by the 1955 children's book, [Harold and the Purple Crayon](https://en.wikipedia.org/wiki/Harold_and_the_Purple_Crayon) by Crockett Johnson. Harold is a little boy who creates his own virtual worlds just by drawing them with his magical purple crayon. In this assignment, you will bring Harold's magic to your computer screen.
+
+In addition to inspiring children for decades, Harold can also claim to have inspired some exciting early computer graphics research in non-photorealistic rendering. In this assignment, we will be implemented portions of the paper, [Harold: A World Made of Drawings](https://dl.acm.org/citation.cfm?id=340927), presented by Cohen et al. at ACM NPAR 2000, the 1st International Symposium on Non-Photorealistic Animation and Rendering.  If you like, you can watch a [video of the original system](https://mediaspace.umn.edu/media/t/1_gtj35asj). 
+
+ The lead author of this paper, Jonathan Cohen, was about your age (a junior or senior in college) when he developed this system and published it as his first research paper. He then went on to work on movie special effects at Industrial Light and Magic. This is the kind of thing you may also be able to do if you continue studying computer graphics and get involved in the graphics, visualization, and VR research groups at the UMN!
+
+In this assignment, you will learn:
+
+- How to perform 3D mesh editing operations in response to user input.
+- How to use pick rays and intersection tests to convert 2D screen space coordinates (e.g., the mouse position, a 2D curve onto the screen) into a 3D virtual world.
+- How to implement a computer graphics algorithm described in a research paper.
+
+You can try out the [instructor's implementation](https://csci-4611-spring-2022.github.io/Builds/Assignment-6) in the Builds repository on the course GitHub.
+
+## Submission Information
+
+You should fill out this information before submitting your assignment. Make sure to document the name and source of any third party assets that you added, such as models, images, sounds, or any other content used that was not solely written by you. 
+
+Name:
+
+Third Party Assets:
+
+Wizard Bonus Functionality:
+
+## Prerequisites
+
+To work with this code, you will first need to install [Node.js](https://nodejs.org/en/) and [Visual Studio Code](https://code.visualstudio.com/). 
+
+## Getting Started
+
+The starter code implements the general structure that we reviewed in lecture.  After cloning your repository, you will need to set up the initial project by pulling the dependencies from the node package manager with:
+
+```
+npm install
+```
+
+This will create a `node_modules` folder in your directory and download all the dependencies needed to run the project.  Note that this folder is `.gitignore` file and should not be committed to your repository.  After that, you can compile and run a server with:
+
+```
+npm run start
+```
+
+The build system should launch your program in a web browser automatically.  If not, you can run it by pointing your browser at `http://localhost:8080`.
+
+## Background
+
+The three main features in Harold are: 
+
+1. Drawing hills and valleys on the ground.
+2. Drawing strokes in the sky.
+3. Drawing billboards, which allow the user to create strokes that show on top of the ground. 
+
+Instead of implementing all three, you will just be implementing #1 and #2. The support code already contains a complete implementation of #3 for you.  Harold is a complete application, so there is quite a bit of support code provided for this assignment. Start by reading through the code, which is heavily commented, and learn how a computer graphics program like this is put together.
+
+The `DrawingApp` class is the main application class and implements the sketch-based user interaction techniques. One of the things that is really cool about Harold is that the user input can be interpreted differently based upon the current content. The original Harold paper did include some drawing modes in order to support some extra features, but for our version, we do not need any buttons to turn on "draw on the sky mode" vs. "draw on the ground mode" vs. "create a billboard mode" – we just draw, and the system figures out our intent. Properties of the path drawn by the user's mouse (called the *stroke*) are used to trigger different 3D modeling operations, as shown in the following table:
+
+| Stroke Made by Mouse                     | 3D Modeling Operation                            |
+| ---------------------------------------- | ------------------------------------------------ |
+| Starts in the sky                        | Add a new stroke to the sky                      |
+| Starts AND ends on the ground            | Edit the ground mesh to create hills and valleys |
+| Starts on the ground and ends in the sky | Create a new billboard                           |
+| Starts on an existing billboard          | Add the stroke to the existing billboard         |
+
+As the user draws a stroke, the application records the path of the mouse as a series of 2D points, which are stored in the `screenPath` array in the`Billboard` class. You’ll need to work with this array, which is of type `THREE.Vector2`, to implement some of the features.
+
+We can’t draw the `screenPath` directly to the screen – it needs to be converted into triangles first. So, the `Billboard` class also contains a `Mesh`, along with arrays of its 3D vertices and indices. The vertices of the mesh follow the centerline of the `screenPath`, adding just a bit of thickness around it so that it can show up nicely on the screen. You will also need to work with this mesh to implement some of the features.
+
+Please note, the 2D points and vertices stored in `screenPath` are not in pixel units.  Instead, they are in **normalized device coordinates**, where the top left corner of the screen is (-1, 1) and the bottom right is (1, -1).  You can think of this as the 2D equivalent of the **canonical view volume** that we discussed in class. This is convenient because it is the coordinate system that is needed when converting a point on the 2D projection plane to a point in 3D space, and it is the expected input for the `Raycaster` we will use to implement the 3D modeling operations.
+
+## Requirement 1: Mouse-Sky Interactions
+
+In order to draw anything (on the sky or ground), the first step is to tell which part of the world the mouse is currently on. Mouse raycasting was covered in the worksheet, so theoretically all you need to do for this part is to stitch together the parts of your mouse-sky intersection code and put them into TBD! Note that this method also has an output parameter (sky_point) – make sure to take extra care when dealing with this.
+
+## Requirement 2: Drawing in the Sky
+
+It is easier to implement drawing in the sky than editing the ground mesh, so we recommend that you implement this part next. All of the sky portions of the program are implemented in the Sky class (sky.h and sky.cc), and the support code already has a structure in place for calling Sky when appropriate in order to create new strokes and draw them. The Draw() call is already completely implemented for you. Your job is simply to implement the Sky::AddSkyStroke() function.
+
+This function takes the stroke2d_mesh_ described earlier as input. We want to project this mesh onto the sky, which is really a huge sphere of radius 500. To do this, you need to create a 3D mesh that has the same structural connectivity as the stroke2d_mesh_ but that has vertices that lie on the sky sphere rather than on the 2D screen. There are several ways to do this, but we think the easiest is to start by copying the stroke2d_mesh_ into a new mesh. You can do this by simply creating a new mesh and setting it equal to stroke2d_mesh_ (e.g., Mesh m = stroke2d_mesh; ). The new mesh will then have the exact same vertices and indices as the original. We want to keep the same indices, but the vertices need to be altered. So, your next step should be to loop through the vertices in the new mesh and convert them to 3D points that lie on the sky sphere. The Sky::ScreenPtHitsSky() function that you completed in the worksheet will be very helpful for this.
+
+When you aree done, store the result in a new SkyStroke struct. See sky.h for the definition of SkyStroke. Don’t forget to store the current stroke color there as well.
+
+## Requirement 3: Editing the Ground
+
+The second requirement is to edit the ground, which you should do in the Ground class (defined in ground.h and ground.cc). A ground_mesh_ is already created for you in the support code. It is a very simple geometry, just a regular grid of triangles, sort of like a checkerboard where each square is divided into 2 triangles. To simplify the mesh- editing algorithm, we will not do any adding or subtracting of vertices. All we will do is move their positions up or down to create hills and valleys. Note that this will mean that some of the triangles will be really stretched out, and you’ll probably notice some lighting artifacts due to this, but this isn’t too distracting since we are using a sketchy rendering style anyway.
+
+The specification for how to edit the ground in response to the stroke drawn by the user comes from the Harold research paper. We will follow the algorithm and equations described in Section 4.5 of the paper, which is quoted here:
+
+---
+
+Terrain-editing strokes must start and end on the ground. Call the starting and ending points *S* and *E*… [T]hese two points, together with the **y**-vector, determine a plane in *R3*, that we call the *projection plane*. The points of the terrain-editing stroke are projected onto this plane (this projection, which is a curve in *R3*, is called the *silhouette curve*); the shadow of the resulting curve (as cast by a sun directly overhead) is a path on the ground (we call this the *shadow*). Points near the shadow have their elevation altered by a rule: each point *P* near the shadow computes its new height (*y*-value), *P'y* , as a convex combination
+
+![](./images/equation1.png)
+
+*(This equation is edited slightly from the original text to include the two cases.)*
+
+where *d* is the distance from *P* to the projection plane, *h* is the *y*-value of the silhouette curve over the nearest point on the projection plane to *P*, and *w*(*d*) is a weighting function given by
+
+![](./images/equation2.png)
+
+his gives a parabolic cross-section of width 10 for a curve drawn over level terrain. Other choices for *w* would yield hills with different shapes that might be more intuitive, but this particular choice gives reasonable results in most cases.
+
+Note that if the silhouette curve bends back on itself (i.e. it defines a silhouette that cannot be modeled using a heightfield), then the variation of height along the shadow will be discontinuous. The resulting terrain then may have unexpected features.
+
+---
+
+OK, that's a whole lot of technical jargon.  The *h* in the equation is a complex to calculate, so we have provided a function called `hfunc()` that you can use to calculate *h* given, as the text describes, the silhouette curve, the closest point on the projection plane to the vertex we are editing, and the normal of the projection plane.
+
+The support code also includes some comments to help your organize your code to implement the three main steps of the algorithm:
+
+1. Defining the projection plane.
+2. Projecting the 2D stroke on the screen into the projection plane to create the silhouette curve.
+3. Looping through the vertices of the ground mesh and adjusting the y-value of each vertex according to the equations above.
+
+In addition to the `hfunc()` function, you’ll also find the `ScreenPtHitsGround()` function quite helpful. Also, don't forget about the MinGfx documentation. The **Point3** class, for example, provides some useful functions, such as finding the closest point on a plane.
+
+## Rubric
+
+To be added.
+
+## Wizard Bonus Challenge
+
+All of the assignments in the course will include great opportunities for students to go beyond the requirements of the assignment and do cool extra work. On each assignment, you can earn **one bonus point** for implementing a meaningful new feature to your program. This should involve some original new programming, and should not just be something that can be quickly implemented by copying and slightly modifying existing code.  
+
+We will not implement the complete Harold paper in this assignment, so one of the most obvious extensions is to go back to that paper and implement some additional features, such as *bridge strokes*, *ground strokes*, or *navigation strokes*. Alternatively, you could write some different stroke shaders to implement watercolor brush strokes. It would also be cool to see these drawing somehow come alive! (In other words, introducing some of the concepts you have already learned about animation.)
+
+As always, completely original and creative ideas are encouraged!
+
+## Submission
+
+When you commit and push your assignment to GitHub, an automated script will build and deploy the production code to the `gh-pages` branch of your repository.  However, your submission is not complete until you do the following:
+
+1. Open your repository on GitHub and go to Settings->Pages.
+2. Change the source to the `gh-pages` branch, then save.
+
+You will need to wait a few minutes for the website to deploy.  After that, make sure to test everything by pointing your web browser at the link generated for your build:
+
+```
+https://csci-4611-spring-2022.github.io/your-repo-name-here
+```
+
+If your program runs correctly, then you are finished!  The published build will indicate to the TAs that your assignment is ready for grading.  If you change your mind and want to make further changes to your code, then just delete the `gh-pages` branch and set the GitHub pages source back to `None`, and it will unpublish the website.
+
+Note that the published JavaScript bundle code generated by the TypeScript compiler has been minified so that it is not human-readable. So, you can feel free to send this link to other students, friends, and family to show off your work!
+
+## Acknowledgments
+
+This assignment was based on content from CSCI 4611 Fall 2021 by [Daniel Keefe](https://www.danielkeefe.net/).
+
+## License
+
+Material for [CSCI 4611 Spring 2022](https://canvas.umn.edu/courses/290928/assignments/syllabus) by [Evan Suma Rosenberg](https://illusioneering.umn.edu/) is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
