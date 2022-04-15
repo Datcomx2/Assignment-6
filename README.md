@@ -91,7 +91,9 @@ These methods transform the billboard vertices in different ways, but they will 
 
 ## Requirement 3: Editing the Ground
 
-The second requirement is to edit the ground, which you should do in the Ground class (defined in ground.h and ground.cc). A ground_mesh_ is already created for you in the support code. It is a very simple geometry, just a regular grid of triangles, sort of like a checkerboard where each square is divided into 2 triangles. To simplify the mesh- editing algorithm, we will not do any adding or subtracting of vertices. All we will do is move their positions up or down to create hills and valleys. Note that this will mean that some of the triangles will be really stretched out, and you’ll probably notice some lighting artifacts due to this, but this isn’t too distracting since we are using a sketchy rendering style anyway.
+The second requirement is to edit the `reshapeGround()` method in the `Ground` class. This is the most complicated part of the assignment, and the code includes extensive comments to help you get started.
+
+The vertices of the ground mesh have already been created.  It is a regular grid of squares, each of which is divided into two triangles, similar to the planar Earth mesh in our previous assignment. To simplify the mesh-editing algorithm, we will not do any adding or subtracting of vertices. All we need to do is move their positions up or down to create hills and valleys. Note that this will mean that some of the triangles will be really stretched out, and you will probably notice some lighting artifacts and geometric distortions.  That is OK, and it isn't too distracting since we are using toon/outline shaders.  (Figuring out ways to overcome these limitations is a great opportunity for a wizardly bonus.)
 
 The specification for how to edit the ground in response to the stroke drawn by the user comes from the Harold research paper. We will follow the algorithm and equations described in Section 4.5 of the paper, which is quoted here:
 
@@ -113,15 +115,9 @@ Note that if the silhouette curve bends back on itself (i.e. it defines a silhou
 
 ---
 
-OK, that's a whole lot of technical jargon.  The *h* in the equation is a complex to calculate, so we have provided a function called `hfunc()` that you can use to calculate *h* given, as the text describes, the silhouette curve, the closest point on the projection plane to the vertex we are editing, and the normal of the projection plane.
+OK, that's a whole lot of technical jargon.  The *h* in the equation is a complex to calculate, so we have provided a function called `computeH()` that you can use to calculate *h* given, as the text describes, the silhouette curve, the projection plane, and the closest point on the projection plane to the vertex we are editing.
 
-The support code also includes some comments to help your organize your code to implement the three main steps of the algorithm:
 
-1. Defining the projection plane.
-2. Projecting the 2D stroke on the screen into the projection plane to create the silhouette curve.
-3. Looping through the vertices of the ground mesh and adjusting the y-value of each vertex according to the equations above.
-
-In addition to the `hfunc()` function, you’ll also find the `ScreenPtHitsGround()` function quite helpful. Also, don't forget about the MinGfx documentation. The **Point3** class, for example, provides some useful functions, such as finding the closest point on a plane.
 
 ## Rubric
 
