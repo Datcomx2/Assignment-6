@@ -1,6 +1,6 @@
 # Assignment 6: A World Made of Drawings
 
-**Due: Thursday, April 28, 11:59pm CDT**
+**Due: Friday, April 29, 11:59pm CDT**
 
 ![](./images/harold.jpg)
 
@@ -87,7 +87,7 @@ For this part, you should first take a look at the`projectToNearPlane()`, `proje
 2. Draw in world space when creating a new billboard
 3. Draw in billboard space when adding to an existing billboard
 
-These methods transform the billboard vertices in different ways, but they will provide a good starting point to figure out the code for raycasting to the sky sphere and then adjusting the position of each vertex.
+These methods transform the billboard vertices in different ways, but they will provide a good starting point to figure out the code for raycasting to the sky sphere and then adjusting the position of each vertex.  Similar to the above methods, you will need to loop through all the vertices in the billboard mesh, project them to the sky sphere, and assign the new vertex positions to the mesh geometry.
 
 ## Requirement 3: Editing the Ground
 
@@ -115,13 +115,28 @@ Note that if the silhouette curve bends back on itself (i.e. it defines a silhou
 
 ---
 
-OK, that's a whole lot of technical jargon.  The *h* in the equation is a complex to calculate, so we have provided a function called `computeH()` that you can use to calculate *h* given, as the text describes, the silhouette curve, the projection plane, and the closest point on the projection plane to the vertex we are editing.
-
-
+We have included extensive comments in the `reshapeGround()` method to help you calculate all the parameters for these equations. The *h* in the equation is a complex to calculate, so we have already implemented a function called `computeH()` that you can use to calculate *h* given, as the text describes, the silhouette curve, the projection plane, and the closest point on the projection plane to the vertex we are editing.
 
 ## Rubric
 
-To be added.
+Graded out of 20 points.  Partial credit is possible for each step.
+
+**Part 1: Mouse-Sky Interactions** (4 points total)
+
+1. Correctly project the 2D mouse coordinates to the sky sphere. (3)
+2. Create a new billboard at the sky intersection point. (1)
+
+**Part 2: Drawing in the Sky** (4 points total)
+
+3. Correctly project all the billboard mesh vertices to the sky sphere. (3)
+4. Update the billboard mesh geometry with the projected vertex positions. (1)
+
+**Part 3: Editing the Ground** (12 points total)
+
+5. Correctly define the projection plane for the stroke. (3)
+6. Project the 2D stroke into 3D to create a silhouette curve that lies on the projection plane. (3)
+7. Loop through all of the vertices of the ground mesh and compute the new height for each one according the equations provided above. (5)
+8. Update the ground mesh geometry with the adjusted vertex positions. (1)
 
 ## Wizard Bonus Challenge
 

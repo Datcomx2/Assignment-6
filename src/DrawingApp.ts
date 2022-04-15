@@ -171,7 +171,7 @@ export class DrawingApp extends GraphicsApp
                 return;
             }
 
-            // Mouse-Sky Intersections
+            // Mouse-Sky Interactions (Part 1)
             // Projects a 2D normalized screen point (e.g., the mouse position in normalized
             // device coordinates) to a 3D point on the "sky," which is really a huge sphere
             // that the viewer is inside.  This ray cast should always return a result

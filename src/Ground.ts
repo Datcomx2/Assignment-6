@@ -97,29 +97,27 @@ export class Ground extends THREE.Mesh
         // for an intersection with a THREE.Plane object.
 
   
+
+
+
+
+
         // 3. Loop through all of the vertices of the ground mesh, and adjust the
         // height of each based on the equations in section 4.5 of the paper, also
-        // repeated in the assignment handout.  The equations rely upon a function
-        // h(), and we have implemented that for you as computeH() defined below in
-        // this file.  A basic loop structure is provided here:
+        // repeated in the assignment readme.  The equations rely upon a function
+        // h(), and we have implemented that for you as computeH() defined below.
+        // Then, update the mesh geometry with the adjusted vertex positions.
         
-        const p = new THREE.Vector3();
-        for(let i=0; i < this.vertices.length - 3; i+=3)
-        {
-            p.set(this.vertices[i], this.vertices[i+1], this.vertices[i+2]) 
-            
-            
-            // adjust p according to the equations...
 
 
-            this.vertices[i] = p.x;
-            this.vertices[i+1] = p.y;
-            this.vertices[i+2] = p.z;
-        }
 
-        // assigns the vertices to the position buffer, computes new normals,
-        // and updates the edge mesh for the silhoutte outline shader
-        this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
+
+
+
+        
+        // Finally, after the position buffer has been updated, we need to compute
+        // new vertex normals and update the edge mesh for the outline shader.
+        // You will not need to modify this part of the code.
         this.geometry.computeVertexNormals();   
         this.edgeMesh.createFromMesh(this); 
     }

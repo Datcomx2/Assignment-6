@@ -110,7 +110,11 @@ export class Billboard extends THREE.Object3D
             this.vertices[i*3+2] = intersection.z - this.position.z;
         }
 
+        // Assign the new mesh vertices
         this.mesh.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
+
+        // Recompute the bounding sphere.  This is necessary to for the 
+        // renderer to correctly cull the object based on the view frustum
         this.mesh.geometry.computeBoundingSphere();
     }
 
@@ -141,15 +145,23 @@ export class Billboard extends THREE.Object3D
             this.vertices[i*3+2] = intersection.z;
         }
 
+        // Assign the new mesh vertices
         this.mesh.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
+
+        // Recompute the bounding sphere.  This is necessary to for the 
+        // renderer to correctly cull the object based on the view frustum
         this.mesh.geometry.computeBoundingSphere();
     }
 
     
-    // Drawing in the sky (PART 2)
-    // Comments to be added
+    // Drawing in the Sky (Part 2)
+    // First, you should take a look at the projectToNearPlane(), projectToWorld(), 
+    // and projectToBillboard()` methods implemented above.  The structure for this
+    // method will be similar, except you will be ray casting to the sky sphere.
     projectToSky(camera: THREE.Camera, sky: THREE.Mesh): void
     {
+        // Reset the position and rotation of the billboard
+        // You will not need to change these variables
         this.position.set(0, 0, 0);
         this.rotation.set(0, 0, 0);
         this.mesh.matrix.identity();
@@ -158,10 +170,6 @@ export class Billboard extends THREE.Object3D
 
         // TO DO: ADD YOUR CODE HERE
 
-
-
-
-        this.mesh.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
-        this.mesh.geometry.computeBoundingSphere();
+        
     }
 }
