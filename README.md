@@ -142,7 +142,11 @@ Graded out of 20 points.  Partial credit is possible for each step.
 
 All of the assignments in the course will include great opportunities for students to go beyond the requirements of the assignment and do cool extra work. On each assignment, you can earn **one bonus point** for implementing a meaningful new feature to your program. This should involve some original new programming, and should not just be something that can be quickly implemented by copying and slightly modifying existing code.  
 
-We will not implement the complete Harold paper in this assignment, so one of the most obvious extensions is to go back to that paper and implement some additional features, such as *bridge strokes*, *ground strokes*, or *navigation strokes*. Alternatively, you could write some different stroke shaders to implement watercolor brush strokes. It would also be cool to see these drawing somehow come alive! (In other words, introducing some of the concepts you have already learned about animation.)
+We will not implement the complete Harold paper in this assignment, so one of the most obvious extensions is to go back to that paper and implement some additional features, such as *bridge strokes*, *ground strokes*, or *navigation strokes*. Alternatively, you could write some different stroke shaders to implement watercolor brush strokes. 
+
+Currently, the controls allow the user to freely move using WASD or the arrow keys, and look around by holding the mouse right button.  It would be interesting to set the camera to a specific height above the ground, and then adjust the height up and down based on elevation by raycasting downwards to the ground mesh.
+
+It would also be cool to see these drawing somehow come alive! (In other words, introducing some of the concepts you have already learned about animation.)
 
 As always, completely original and creative ideas are encouraged!
 
