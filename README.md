@@ -75,15 +75,19 @@ Please note, the 2D points and vertices stored in `screenPath` are not in pixel 
 
 ## Requirement 1: Mouse-Sky Interactions
 
-In order to draw anything (on the sky or ground), the first step is to tell which part of the world the mouse is currently on. Mouse raycasting was covered in the worksheet, so theoretically all you need to do for this part is to stitch together the parts of your mouse-sky intersection code and put them into TBD! Note that this method also has an output parameter (sky_point) – make sure to take extra care when dealing with this.
+In order to draw anything (on the sky or ground), the first step is to tell which part of the world the mouse is currently on. Mouse raycasting was covered in the worksheet, so theoretically all you need to do for this part is to stitch together the parts of your mouse-sky intersection code and put them into the `onMouseMove` method in the `DrawingApp` class.
 
 ## Requirement 2: Drawing in the Sky
 
-It is easier to implement drawing in the sky than editing the ground mesh, so we recommend that you implement this part next. All of the sky portions of the program are implemented in the Sky class (sky.h and sky.cc), and the support code already has a structure in place for calling Sky when appropriate in order to create new strokes and draw them. The Draw() call is already completely implemented for you. Your job is simply to implement the Sky::AddSkyStroke() function.
+It is easier to implement drawing in the sky than editing the ground mesh, so we recommend that you implement this part next.   For this requirement, you will need to complete the code in the `projectToSky()` method of the `Billboard` class.
 
-This function takes the stroke2d_mesh_ described earlier as input. We want to project this mesh onto the sky, which is really a huge sphere of radius 500. To do this, you need to create a 3D mesh that has the same structural connectivity as the stroke2d_mesh_ but that has vertices that lie on the sky sphere rather than on the 2D screen. There are several ways to do this, but we think the easiest is to start by copying the stroke2d_mesh_ into a new mesh. You can do this by simply creating a new mesh and setting it equal to stroke2d_mesh_ (e.g., Mesh m = stroke2d_mesh; ). The new mesh will then have the exact same vertices and indices as the original. We want to keep the same indices, but the vertices need to be altered. So, your next step should be to loop through the vertices in the new mesh and convert them to 3D points that lie on the sky sphere. The Sky::ScreenPtHitsSky() function that you completed in the worksheet will be very helpful for this.
+For this part, you should first take a look at the`projectToNearPlane()`, `projectToWorld()`, and `projectToBillboard()` methods.  These three methods handle the calculations necessary to project the mesh vertices (in normalized device coordinates) to:
 
-When you aree done, store the result in a new SkyStroke struct. See sky.h for the definition of SkyStroke. Don’t forget to store the current stroke color there as well.
+1. Draw on the camera near plane while the user is creating the stroke
+2. Draw in world space when creating a new billboard
+3. Draw in billboard space when adding to an existing billboard
+
+These methods transform the billboard vertices in different ways, but they will provide a good starting point to figure out the code for raycasting to the sky sphere and then adjusting the position of each vertex.
 
 ## Requirement 3: Editing the Ground
 
