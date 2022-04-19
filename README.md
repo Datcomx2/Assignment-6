@@ -75,7 +75,7 @@ Please note, the 2D points and vertices stored in `screenPath` are not in pixel 
 
 ## Requirement 1: Mouse-Sky Interactions
 
-In order to draw anything (on the sky or ground), the first step is to tell which part of the world the mouse is currently on. Mouse raycasting was covered in the worksheet, so theoretically all you need to do for this part is to stitch together the parts of your mouse-sky intersection code and put them into the `onMouseMove` method in the `DrawingApp` class.
+In order to draw anything (on the sky or ground), the first step is to tell which part of the world the mouse is currently on. Mouse raycasting was covered in the worksheet, so theoretically all you need to do for this part is to stitch together the parts of your mouse-sky intersection code and put them into the `onMouseDown` method in the `DrawingApp` class.
 
 ## Requirement 2: Drawing in the Sky
 
